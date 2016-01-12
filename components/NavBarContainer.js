@@ -18,6 +18,7 @@ var NavBarContainer = React.createClass({
   },
 
   componentWillReceiveProps: function(newProps) {
+    if (!newProps.currentRoute) { return; }
     let previousRoute;
 
     if (!this.props.currentRoute || (this.props.currentRoute.index === null)) {

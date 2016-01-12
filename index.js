@@ -23,13 +23,22 @@ var Router = React.createClass({
     };
   },
 
-  /*
-   * This changes the title in the navigation bar
-   * It should preferrably be called for "onWillFocus" instad >
-   * > but a recent update to React Native seems to break the animation
-   */
-  onDidFocus: function(route) {
-    this.setState({ route: route });
+  componentDidMount: function() {
+    this.onWillFocusNavigationSub =
+      this.refs.navigator.navigationContext.addListener(
+        'willfocus', this.onWillFocus
+    );
+  },
+
+  componentWillUnmount: function() {
+    if (this.onWillFocusNavigationSub) {
+      this.onWillFocusNavigationSub.remove();
+      this.onWillFocusNavigationSub = null;
+    }
+  },
+
+  onWillFocus: function(event) {
+    self.setState({ route: Object.assign({}, event.target.currentRoute) });
   },
 
   onBack: function(navigator) {
@@ -150,10 +159,10 @@ var Router = React.createClass({
     initialRoute.index = 0;
     return (
       <Navigator
+        ref="navigator"
         initialRoute={initialRoute}
         navigationBar={navigationBar}
-        renderScene={this.renderScene}
-        onDidFocus={this.onDidFocus}/>)
+        renderScene={this.renderScene} />)
   },
 });
 
